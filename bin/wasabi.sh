@@ -49,6 +49,8 @@ commands:
   remove[:wasabi,cassandra,mysql]        : remove all, wasabi, cassandra, mysql
   package                                : build deployable packages
   release[:start,finish]                 : promote release
+  unbootstrap                            : uninstall dependencies
+  list-dependencies                      : lists all the dependencies that are un-/installed by the un-/bootstrap command
 ${reset}
 EOF
 
@@ -72,6 +74,31 @@ beerMe() {
   done
 
   echo ""
+}
+
+list_dependencies() {
+  printf "dependencies installed via brew \n"
+  for formula in "${formulas[@]}"; do
+    printf "\t${formula}\n"
+  done
+
+  printf "dependencies installed via brew cask \n"
+  for cask in "${casks[@]}"; do
+    printf "\t${cask}\n"
+  done
+}
+
+unbootstrap() {
+  echo "${green}uninstalling dependencies: ${formulas[@]} ${casks[@]} ...${reset}"
+
+  for formula in "${formulas[@]}"; do
+    [[ ! $(brew list ${formula} 2>/dev/null) ]] && brew uninstall ${formula} 2>/dev/null
+  done
+
+  for cask in "${casks[@]}"; do
+    [[ $(brew cask list ${cask} 2>/dev/null) ]] && brew cask uninstall --force ${cask} 2>/dev/null
+  done
+
 }
 
 bootstrap() {
@@ -289,6 +316,7 @@ eval $(docker-machine env wasabi) 2>/dev/null
 for command in ${@:$OPTIND}; do
   case "${command}" in
     bootstrap) bootstrap;;
+    list-dependencies) list_dependencies;;
     start) start;;
     start:*) commands=$(echo ${command} | cut -d ':' -f 2)
       (IFS=','; for cmd in ${commands}; do start ${cmd}; done);;
