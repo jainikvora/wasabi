@@ -17,6 +17,9 @@
 
 formulas=("bash" "cask" "git" "maven" "python" "ruby" "node" "docker" "docker-machine")
 casks=("java" "vagrant" "virtualbox")
+npms=("yo" "grunt-cli" "bower")
+gems=("compass")
+
 build_default=false
 endpoint_default=localhost:8080
 verify_default=false
@@ -77,29 +80,24 @@ beerMe() {
 }
 
 list_dependencies() {
-  printf "dependencies installed via brew \n"
+  printf "The following dependencies are installed when running the bootstrap command.\n\n"
   for formula in "${formulas[@]}"; do
-    printf "\t${formula}\n"
-  done
-
-  printf "dependencies installed via brew cask \n"
-  for cask in "${casks[@]}"; do
-    printf "\t${cask}\n"
-  done
-}
-
-unbootstrap() {
-  echo "${green}uninstalling dependencies: ${formulas[@]} ${casks[@]} ...${reset}"
-
-  for formula in "${formulas[@]}"; do
-    [[ ! $(brew list ${formula} 2>/dev/null) ]] && brew uninstall ${formula} 2>/dev/null
+    printf "${formula}\n"
   done
 
   for cask in "${casks[@]}"; do
-    [[ $(brew cask list ${cask} 2>/dev/null) ]] && brew cask uninstall --force ${cask} 2>/dev/null
+    printf "${cask}\n"
   done
 
+  for package in "${npms[@]}"; do
+    printf "${package}\n"
+  done
+
+  for gem in "${gems[@]}"; do
+    printf "${gem}\n"
+  done
 }
+
 
 bootstrap() {
   if ! hash brew 2>/dev/null; then
@@ -127,11 +125,13 @@ bootstrap() {
 
   npm config set prefix $(brew --prefix)
 
-  for n in yo grunt-cli bower; do
+  for n in "${npms[@]}"; do
     [[ ! $(npm -g list 2>/dev/null | grep ${n}) ]] && npm -g install ${n}
   done
 
-  [[ ! $(gem list | grep compass) ]] && gem install compass
+  for g in "${gems[@]}"; do
+    [[ ! $(gem list 2>/dev/null | grep ${g}) ]] && gem install ${g}
+  done
 
   echo "${green}installed dependencies: ${formulas[@]} ${casks[@]}${reset}"
 }
@@ -317,6 +317,7 @@ for command in ${@:$OPTIND}; do
   case "${command}" in
     bootstrap) bootstrap;;
     list-dependencies) list_dependencies;;
+    unbootstrap) unbootstrap;;
     start) start;;
     start:*) commands=$(echo ${command} | cut -d ':' -f 2)
       (IFS=','; for cmd in ${commands}; do start ${cmd}; done);;
