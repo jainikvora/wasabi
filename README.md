@@ -22,10 +22,10 @@ Learn more about how Wasabi can empower your team to move from hunches to action
 * **100% API Driven** - Compatible with any language and environment.
 * **Platform Agnostic** - A uniform, consistent experience across web, mobile, desktop, and also front-end, back-end.
 * **Get up and running in minutes** - Spin up your Wasabi docker in 5 minutes and be in production with the platform, instrumentation, and experiments within a day.
-* **It’s Free** - Don’t pay an arm and a leg for an enterprise-grade platform – the platform is free! 
+* **It’s Free** - Don’t pay an arm and a leg for an enterprise-grade platform – the platform is free!
 * **Real-time assignments** - Assign users into experiments in real-time, to preserve traffic for other parallel A/B tests.
 * **Cloud and on-premise** - Designed to live in the cloud or in your own data center.
-* **Analytics** - Core analytics functionality and metrics visualization out of the box. 
+* **Analytics** - Core analytics functionality and metrics visualization out of the box.
 * **Administrative UI** - Manage and setup your experiments using our user friendly interface.
 
 ### User Interface
@@ -139,7 +139,7 @@ You can assign a user with a unique ID (e.g. 'userID1') to the experiment by cal
 }
 ```
 
-Now the 'userID1' user is assigned into the 'BucketA' bucket. Let's record an impression of their experience 
+Now the 'userID1' user is assigned into the 'BucketA' bucket. Let's record an impression of their experience
 with this API Request:
 
 > Record an impression:
@@ -150,7 +150,7 @@ with this API Request:
     http://192.168.99.100:8080/api/v1/events/applications/Demo_App/experiments/BuyButton/users/userID1
 ```
 
-If the 'userID1' user does an action, such as clicking the buy button, you'd record it with this API Request: 
+If the 'userID1' user does an action, such as clicking the buy button, you'd record it with this API Request:
 
 > Record an action:
 
@@ -169,13 +169,13 @@ The following developer resources are available:
 ```bash
 % ./bin/wasabi.sh resource:api
 ```
-  
+
 > Javadoc
 
 ```bash
 % ./bin/wasabi.sh resource:doc
 ```
-  
+
 > Wasabi UI
 
 ```bash
@@ -218,16 +218,16 @@ Further, there are a number of additional wasabi.sh options available you should
 
 ```bash
 % ./bin/wasabi.sh --help
-  
+
   usage: wasabi.sh [options] [commands]
-  
+
   options:
     -b | --build [ true | false ]          : build; default: false
     -e | --endpoint [ host:port ]          : api endpoint; default: localhost:8080
     -v | --verify [ true | false ]         : verify installation configuration; default: false
     -s | --sleep [ sleep-time ]            : sleep/wait time in seconds; default: 30
     -h | --help                            : help message
-  
+
   commands:
     bootstrap                              : install dependencies
     start[:cassandra,mysql,wasabi]         : start all, cassandra, mysql, wasabi
@@ -238,6 +238,7 @@ Further, there are a number of additional wasabi.sh options available you should
     remove[:wasabi,cassandra,mysql]        : remove all, wasabi, cassandra, mysql
     package                                : build deployable packages
     release[:start,finish]                 : promote release
+    list-dependencies                      : lists all the dependencies, missing ones can be installed by the bootstrap command
 ```
 
 ## Develop
@@ -357,4 +358,3 @@ Steps to contribute:
 8. Obtain 2 approval _squirrels_ before your changes can be merged
 
 Thank you for you contribution!
-
