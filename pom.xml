@@ -165,6 +165,7 @@ http://www.w3.org/2001/XMLSchema-instance">
         <module>modules/feedback-objects</module>
         <module>modules/functional-test</module>
         <module>modules/main</module>
+        <module>modules/cassandra-datastax</module>
         <module>modules/repository-datastax</module>
         <module>modules/repository</module>
         <module>modules/swagger-ui</module>
