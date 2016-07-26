@@ -104,6 +104,11 @@
  -->        <!--
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
+            <artifactId>wasabi-cassandra-datastax</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
             <artifactId>wasabi-user-directory</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
