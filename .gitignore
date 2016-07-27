@@ -29,3 +29,4 @@ modules/ui/dist
 modules/ui/node_modules
 modules/ui/app/bower_components
 modules/ui/app/scripts/config.js
+ATTRIBUTIONS/*.xml
