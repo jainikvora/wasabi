@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.intuit.wasabi</groupId>
         <artifactId>wasabi</artifactId>
-        <version>1.0.20160715100540</version>
+        <version>1.0.20160701080732-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -29,11 +29,6 @@
     <name>${project.artifactId}</name>
 
     <dependencies>
-      <dependency>
-  			<groupId>com.datastax.cassandra</groupId>
-  			<artifactId>cassandra-driver-core</artifactId>
-  			<version>3.0.3</version>
-  		</dependency>
   		<dependency>
   			<groupId>ch.qos.logback</groupId>
   			<artifactId>logback-classic</artifactId>
@@ -96,6 +91,12 @@
             <artifactId>wasabi-feedback-objects</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>wasabi-cassandra-datastax</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
     <!--
         <dependency>
             <groupId>${project.parent.groupId}</groupId>

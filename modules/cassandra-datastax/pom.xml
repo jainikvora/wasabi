@@ -20,11 +20,11 @@
 	<parent>
             <groupId>com.intuit.wasabi</groupId>
             <artifactId>wasabi</artifactId>
-            <version>1.0.20160715100540-SNAPSHOT</version>
+            <version>1.0.20160701080732-SNAPSHOT</version>
             <relativePath>../../pom.xml</relativePath>
 	</parent>
 
-    <artifactId>wasabi-cassandra</artifactId>
+    <artifactId>wasabi-cassandra-datastax</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
 
