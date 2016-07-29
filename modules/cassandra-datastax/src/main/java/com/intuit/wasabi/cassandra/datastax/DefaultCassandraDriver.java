@@ -18,11 +18,13 @@ package com.intuit.wasabi.cassandra.datastax;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
+import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.DefaultRetryPolicy;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.intuit.wasabi.cassandra.datastax.health.DefaultCassandraHealthCheck;
 import org.slf4j.Logger;
 
@@ -50,8 +52,9 @@ public class DefaultCassandraDriver implements CassandraDriver {
     private boolean keyspaceInitialized;
 
     @Inject
-    public DefaultCassandraDriver(CassandraDriver.Configuration config, HealthCheckRegistry healthChecks,
-                                  String instanceName)
+    public DefaultCassandraDriver(CassandraDriver.Configuration config,
+                                  HealthCheckRegistry healthCheckRegistry,
+                                  @Named("CassandraInstanceName") String instanceName)
             throws IOException {
         super();
 
@@ -60,7 +63,7 @@ public class DefaultCassandraDriver implements CassandraDriver {
         LOGGER.info("Initializing driver");
         initialize();
         // Register for health check
-        healthChecks.register(instanceName, new DefaultCassandraHealthCheck(getSession()));
+        healthCheckRegistry.register(instanceName, new DefaultCassandraHealthCheck(getSession()));
     }
 
     private void initialize() throws IOException {
@@ -101,9 +104,9 @@ public class DefaultCassandraDriver implements CassandraDriver {
                 //Configure the connection pool's options
                 PoolingOptions poolingOptions = new PoolingOptions()
                         .setPoolTimeoutMillis(20_000)
-                        .setMaxRequestsPerConnection(HostDistance.LOCAL, 10_000_000)
+                        .setMaxRequestsPerConnection(HostDistance.LOCAL, 10_000) //range  (0, 32768)
                         .setMaxConnectionsPerHost(HostDistance.LOCAL, getConfiguration().getMaxConnectionsPerHost())
-                        .setMaxRequestsPerConnection(HostDistance.REMOTE, 10_000_000)
+                        .setMaxRequestsPerConnection(HostDistance.REMOTE, 10_000) //range  (0, 32768)
                         .setMaxConnectionsPerHost(HostDistance.REMOTE, getConfiguration().getMaxConnectionsPerHost());
                 builder.withPoolingOptions(poolingOptions);
 
@@ -145,11 +148,11 @@ public class DefaultCassandraDriver implements CassandraDriver {
                     }
                 }
 
+                this.cluster = builder.build();
                 cluster.getConfiguration()
                         .getProtocolOptions()
                         .setCompression(ProtocolOptions.Compression.LZ4);
 
-                this.cluster = builder.build();
                 Metadata metadata = cluster.getMetadata();
                 LOGGER.info("Connected to cluster: %s\n", metadata.getClusterName());
                 for (Host host : metadata.getAllHosts()) {
@@ -158,21 +161,28 @@ public class DefaultCassandraDriver implements CassandraDriver {
                             host.getAddress(),
                             host.getRack());
                 }
-                session = cluster.connect(getConfiguration().getKeyspaceName());
-
-                // Try to get the definition to test if the keyspace exists
-                try {
-                    synchronized (this) {
-                        if (session.getLoggedKeyspace() != null) {
-                            keyspaceInitialized = true;
-                        } else {
-                            initializeKeyspace();
-                            keyspaceInitialized = true;
-                        }
+                synchronized (this) {
+                    try {
+                        session = cluster.connect(getConfiguration().getKeyspaceName());
+                    } catch (InvalidQueryException ex){ //This exception occurs when namesapce does not exists
+                        session = cluster.connect(); // have to attach to the root keyspace first
+                        initializeKeyspace();
                     }
-                } catch (DriverException e) {
-                    LOGGER.warn("Keyspace " + getConfiguration().getKeyspaceName() + " doesn't exist", e);
-                    keyspaceInitialized = false;
+
+                    // Try to get the definition to test if the keyspace exists
+                    try {
+
+                            if (session.getLoggedKeyspace() != null) {
+                                keyspaceInitialized = true;
+                            } else {
+                                initializeKeyspace();
+                                keyspaceInitialized = true;
+                            }
+
+                    } catch (DriverException e) {
+                        LOGGER.warn("Keyspace " + getConfiguration().getKeyspaceName() + " doesn't exist", e);
+                        keyspaceInitialized = false;
+                    }
                 }
             }
         }
