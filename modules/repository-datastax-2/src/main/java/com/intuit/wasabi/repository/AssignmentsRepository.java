@@ -30,6 +30,8 @@ import com.intuit.wasabi.experimentobjects.Experiment;
 
 //import javax.ws.rs.core.StreamingOutput;
 
+
+
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -57,6 +59,10 @@ public interface AssignmentsRepository {
      * @param context  Environment context
      * @return Set of experiments for user
      */
+	@Query("select * from experiment_user_index " +
+            "where user_id = ? and app_name = ? and context = ?")
+	ExperimentUser getUserAssignmentsFullByWrappedIds(User.ID userID, Application.Name appLabel, Context context);
+
 	@Query("select experiment_id from experiment_user_index " +
             "where user_id = ? and app_name = ? and context = ?")
 	ResultSet getUserAssignmentsByWrappedIds(User.ID userID, Application.Name appLabel, Context context);
@@ -64,6 +70,7 @@ public interface AssignmentsRepository {
 	@Query("select experiment_id from experiment_user_index " +
 			  "where user_id = ? and app_name = ? and context = ?")
 	Result<ExperimentUser> getUserAssignments(String userID, String appLabel, String context);
+	
 	/**
      * Assign a user to experiment
      *
@@ -73,8 +80,17 @@ public interface AssignmentsRepository {
      * @return Resulting assignment
      */
 //    Assignment assignUser(Assignment assignment, Experiment experiment, Date date);
+	 @Query("insert into user_assignment_look_up " +
+                    "(experiment_id, user_id, context, created, bucket_label) " +
+                    "values (?, ?, ?, ?, ?)")
+	 public void assignUserToLookup(Experiment.ID experimentId, User.ID userId, Context context, Date date, String buckeLabel);
+	
+	 @Query("insert into user_assignment_look_up " +
+             "(experiment_id, user_id, context, created) " +
+             "values (?, ?, ?, ?)")
+	 public void assignUserToLookup(Experiment.ID experimentId, User.ID userId, Context context, Date date);
 
-    /**
+	 /**
      * Get assignments
      *
      * @param userID         User Id
@@ -83,6 +99,12 @@ public interface AssignmentsRepository {
      * @param allExperiments A table of all Experiments for this application
      * @return Table of assignments
      */
+	 // Note the client needs to process add more information to create Table from the last argument
+	 // allExperiments ( look at CassandraAssignmentRepository for that logic 
+	 @Query("select * from experiment_user_index " +
+                "where user_id = ? and app_name = ? and context = ?")
+	 Result<ExperimentUser> getAssignments(User.ID userId, Application.Name appLabel, Context context);
+	 
 //    Table<Experiment.ID, Experiment.Label, String> getAssignments(User.ID userID, Application.Name appLabel,
 //                                                                  Context context,
 //                                                                  Table<Experiment.ID, Experiment.Label,
@@ -96,8 +118,10 @@ public interface AssignmentsRepository {
      * @param context      Environment context
      * @return Assignment
      */
-//    Assignment getAssignment(Experiment.ID experimentID, User.ID userID, Context context);
-
+	 /** this method internally calls lookup or old method */
+	 /*
+    Assignment getAssignment(Experiment.ID experimentID, User.ID userID, Context context);
+	  */
     /**
      * Delete assignment for experiment, user and application
      *
@@ -107,8 +131,11 @@ public interface AssignmentsRepository {
      * @param appName           Application name
      * @param currentAssignment Assignment to be deleted
      */
+	 // This method calls a bunch of method
 //    void deleteAssignment(Experiment experiment, User.ID userID, Context context, Application.Name appName,
 //                          Assignment currentAssignment);
+      @Query("delete from user_assignment_look_up where experiment_id = ? and user_id = ? and context = ?")
+	  public void deleteUserFromUserAssignmentLookUp(Experiment.ID experimentID, User.ID userID, Context context);
 
     /**
      * Assign user to the old user_assignment table.

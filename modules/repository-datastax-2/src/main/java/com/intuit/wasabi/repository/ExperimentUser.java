@@ -26,59 +26,65 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.intuit.wasabi.experimentobjects.Application;
+import com.intuit.wasabi.experimentobjects.Context;
+import com.intuit.wasabi.experimentobjects.Experiment;
 
 @Table(name="experiment_user_index",keyspace="wasabi_experiments")
 public final class ExperimentUser {
 
 	 @PartitionKey
 	 @Column(name="user_id")
-	 String user_id;
-	 public String getUser_id() {
+	 Experiment.ID user_id;
+	 public Experiment.ID getUser_id() {
 		return user_id;
 	}
 
-	public void setUser_id(String user_id) {
+	public void setUser_id(Experiment.ID user_id) {
 		this.user_id = user_id;
 	}
 
-	public String getContext() {
+	public Context getContext() {
 		return context;
 	}
 
-	public void setContext(String context) {
+	public void setContext(Context context) {
 		this.context = context;
 	}
 
-	public String getApp_name() {
+	public Application.Name getApp_name() {
 		return app_name;
 	}
 
-	public void setApp_name(String app_name) {
+	public void setApp_name(Application.Name app_name) {
 		this.app_name = app_name;
-	}
-
-	public UUID getExperiment_id() {
-		return experiment_id;
-	}
-
-	public void setExperiment_id(UUID experiment_id) {
-		this.experiment_id = experiment_id;
 	}
 
 	public String getBucket() {
 		return bucket;
 	}
 
+	public Experiment.ID getExperiment_id() {
+		return experiment_id;
+	}
+
+	public void setExperiment_id(Experiment.ID experiment_id) {
+		this.experiment_id = experiment_id;
+	}
+
 	public void setBucket(String bucket) {
 		this.bucket = bucket;
 	}
 
-	@ClusteringColumn(0)
-	 String   context;
-	 @ClusteringColumn(1)
-	 String   app_name;
+	 @ClusteringColumn(0)
+	 Context   context;
+
+	@ClusteringColumn(1)
+	 Application.Name   app_name;
+	 
 	 @ClusteringColumn(2)
-	 UUID   experiment_id;
+	 Experiment.ID   experiment_id;
+
 	 String   bucket;
 
 	 public String toString() {
