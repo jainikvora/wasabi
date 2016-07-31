@@ -102,13 +102,24 @@
             <artifactId>wasabi-exceptions</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>wasabi-feedback-objects</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
- -->        <!--
          <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>wasabi-experiment-objects</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>wasabi-assignment-objects</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+         <!--
+        <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>wasabi-user-directory</artifactId>
             <version>${project.parent.version}</version>

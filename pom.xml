@@ -475,6 +475,7 @@ http://www.w3.org/2001/XMLSchema-instance">
                 <artifactId>maven-changelog-plugin</artifactId>
                 <version>2.3</version>
             </plugin>
+<!--
             <plugin>
                 <groupId>com.github.jinnovations</groupId>
                 <artifactId>attribution-maven-plugin</artifactId>
@@ -491,6 +492,7 @@ http://www.w3.org/2001/XMLSchema-instance">
                     </execution>
                 </executions>
             </plugin>
+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
