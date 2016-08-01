@@ -26,6 +26,7 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.intuit.wasabi.assignmentobjects.User;
 import com.intuit.wasabi.experimentobjects.Application;
 import com.intuit.wasabi.experimentobjects.Context;
 import com.intuit.wasabi.experimentobjects.Experiment;
@@ -35,12 +36,24 @@ public final class ExperimentUser {
 
 	 @PartitionKey
 	 @Column(name="user_id")
-	 Experiment.ID user_id;
-	 public Experiment.ID getUser_id() {
+	 User.ID user_id;
+
+	 @ClusteringColumn(0)
+	 Context   context;
+
+	 @ClusteringColumn(1)
+	 Application.Name   app_name;
+	 
+	 @ClusteringColumn(2)
+	 Experiment.ID   experiment_id;
+
+	 String   bucket;
+
+	 public User.ID getUser_id() {
 		return user_id;
 	}
 
-	public void setUser_id(Experiment.ID user_id) {
+	public void setUser_id(User.ID user_id) {
 		this.user_id = user_id;
 	}
 
@@ -75,17 +88,6 @@ public final class ExperimentUser {
 	public void setBucket(String bucket) {
 		this.bucket = bucket;
 	}
-
-	 @ClusteringColumn(0)
-	 Context   context;
-
-	@ClusteringColumn(1)
-	 Application.Name   app_name;
-	 
-	 @ClusteringColumn(2)
-	 Experiment.ID   experiment_id;
-
-	 String   bucket;
 
 	 public String toString() {
 		 return ToStringBuilder.reflectionToString(this);
