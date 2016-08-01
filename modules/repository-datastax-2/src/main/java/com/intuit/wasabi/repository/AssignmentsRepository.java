@@ -90,6 +90,10 @@ public interface AssignmentsRepository {
              "values (?, ?, ?, ?)")
 	 public void assignUserToLookup(Experiment.ID experimentId, User.ID userId, Context context, Date date);
 
+	 @Query("select * from user_assignment_look_up where user_id = ?")
+	 public Result<UserAssignmentLookup> getUserAssignmentLookup(User.ID user_id);
+	 
+	 
 	 /**
      * Get assignments
      *

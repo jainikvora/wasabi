@@ -132,4 +132,13 @@ public class AssignmentsRepositoryTest {
 				Application.Name.valueOf("SW50ZWdyVGVzdA_1467633919665App_PRIMARY"), Context.valueOf("PROD"));
 		System.out.println("Assignments " + result.all());
 	}
+
+	@Test // Make sure the entry exists with user id AssignUserToLookup
+	public void testGetUserAssignmentLookup() {
+		MappingManager manager = new MappingManager(session);
+		AssignmentsRepository accessor = manager.createAccessor(AssignmentsRepository.class);
+		Result<UserAssignmentLookup> result = accessor.getUserAssignmentLookup(
+				User.ID.valueOf("AssignUserToLookup"));
+		System.out.println("Assignments " + result.all());
+	}
 }
