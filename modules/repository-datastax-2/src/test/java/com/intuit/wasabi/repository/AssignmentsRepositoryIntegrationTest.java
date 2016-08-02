@@ -119,11 +119,6 @@ public class AssignmentsRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void testDeleteUserAssignmentLookupWithoutLabel() {
-		// to be implemented
-	}
-
-	@Test
 	public void testGetAssignments() {
 		MappingManager manager = new MappingManager(session);
 		AssignmentsRepository accessor = manager.createAccessor(AssignmentsRepository.class);
