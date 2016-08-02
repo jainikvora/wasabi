@@ -118,6 +118,7 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
         this.assignBucketCount = assignBucketCount;
         this.defaultTimeFormat = defaultTimeFormat;
 
+        // TODO MS Notes - Do we need thread to be part of repository
         assignmentsCountExecutor = (ThreadPoolExecutor) new ThreadPoolExecutor(assignmentsCountThreadPoolSize,
                 assignmentsCountThreadPoolSize, 0L, MILLISECONDS, assignmentsCountQueue);
     }
@@ -195,7 +196,7 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
 
         assignmentsCountExecutor.execute(new AssignmentCountEnvelope(assignmentsRepository, experimentRepository,
                 dbRepository, experiment, assignment, countUp, eventLog, date, assignUserToExport, assignBucketCount));
-
+     // TODO - In batch
         indexUserToExperiment(assignment);
         indexUserToBucket(assignment);
         indexExperimentsToUser(assignment);
@@ -475,7 +476,7 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
                                                                          Context context,
                                                                          Table<Experiment.ID, Experiment.Label,
                                                                                  Experiment> allExperiments) {
-
+    	// TODO  MS Notes - don't use embedded constants ??
         final String CQL = "select * from experiment_user_index " +
                 "where user_id = ? and app_name = ? and context = ?";
 
@@ -663,6 +664,8 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
     @Timed
     public void deleteAssignment(Experiment experiment, User.ID userID, Context context, Application.Name appName,
                                  Assignment currentAssignment) {
+    	
+    	// TODO  MS Notes - Should be done in a batch
 // Deletes the assignment data across all the relevant tables in a consistent manner
         deleteUserFromLookUp(experiment.getID(), userID, context);
         //Updating the assignment bucket counts by -1 in a asynchronous AssignmentCountEnvelope thread
@@ -949,6 +952,7 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
      */
     @Override
     @Timed
+    // TODO  MS Notes - Why not pass integer count and avoid if block ???
     public void updateBucketAssignmentCount(Experiment experiment, Assignment assignment, boolean countUp) {
         Bucket.Label bucketLabel = assignment.getBucketLabel();
         Bucket.Label bucketLabel1 = null;
@@ -1011,6 +1015,9 @@ public class CassandraAssignmentsRepository implements AssignmentsRepository {
                         Long numberOfAssignments = columns.getColumnByName("bucket_assignment_count").getLongValue();
                         totalAssignments = totalAssignments + numberOfAssignments.intValue();
                         // Updates the BucketAssignmentCountList with # of assignments for that bucket
+                        
+                       // TODO  MS Notes - Will bucketAssignmentCountList ever be null 
+                        
                         if (bucketAssignmentCountList != null) {
                             if (!"NULL".equals(bucketLabel.toString())) {
                                 bucketAssignmentCountList.add(new BucketAssignmentCount.Builder()
