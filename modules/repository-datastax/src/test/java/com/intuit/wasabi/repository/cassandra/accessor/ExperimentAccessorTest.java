@@ -109,6 +109,12 @@ public class ExperimentAccessorTest {
     }
 
     @Test
+    public void getExperimentUsingDefaultMapper(){
+        Experiment experiment = mapper.get(UUID.fromString(TEST_UUID));
+        logger.info(experiment.toString());
+    }
+
+    @Test
     public void preparedStatementTest(){
         PreparedStatement preparedStatement1 = session.prepare("UPDATE experiment SET STATE=?, MODIFIED=? WHERE id = ?");
         session.execute(preparedStatement1.bind(
