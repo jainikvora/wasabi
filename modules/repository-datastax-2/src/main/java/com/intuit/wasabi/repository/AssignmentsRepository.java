@@ -15,38 +15,29 @@
  *******************************************************************************/
 package com.intuit.wasabi.repository;
 
+import java.util.Date;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+//import com.intuit.wasabi.analyticsobjects.counts.AssignmentCounts;
+//import com.intuit.wasabi.analyticsobjects.counts.BucketAssignmentCount;
+//import com.intuit.wasabi.analyticsobjects.counts.TotalUsers;
 //import com.intuit.wasabi.analyticsobjects.Parameters;
 //import com.intuit.wasabi.assignmentobjects.Assignment;
 import com.intuit.wasabi.assignmentobjects.User;
 import com.intuit.wasabi.experimentobjects.Application;
+import com.intuit.wasabi.experimentobjects.Bucket;
 //import com.intuit.wasabi.experimentobjects.Bucket;
 import com.intuit.wasabi.experimentobjects.Context;
 import com.intuit.wasabi.experimentobjects.Experiment;
 
-
-//import javax.ws.rs.core.StreamingOutput;
-
-
-
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import com.intuit.wasabi.repository.model.ExperimentUser;
+import com.intuit.wasabi.repository.model.UserAssignmentLookup;
 
 /**
- * Interface to support assignment requests
- *
- * @see User
- * @see Experiment
- * @see Application
- * @see Experiment
- * @see Context
- * @see Assignment
- * @see Bucket
- * @see Parameters
+ * A prototype of repository using datastax accessor.  The comments may be out of sync
  */
 @Accessor
 public interface AssignmentsRepository {
@@ -187,6 +178,7 @@ public interface AssignmentsRepository {
      * @param exception Exception
      * @param data      Assignment Data to be pushed to staging
      */
+// This is just recording an exception ??      
 //    void pushAssignmentToStaging(String exception, String data);
 
     /**
@@ -206,5 +198,78 @@ public interface AssignmentsRepository {
      * @return AssignmentCounts
      */
 //    AssignmentCounts getBucketAssignmentCount(Experiment experiment);
+      // Following is business logic/aggregation that should be removed to service tier
+      /*
+    public AssignmentCounts getBucketAssignmentCount(Experiment experiment) {
+		// Why is this declared here ??
+        AssignmentCounts assignmentCounts;
+
+        List<BucketAssignmentCount> bucketAssignmentCountList = new ArrayList<BucketAssignmentCount>();
+        Integer totalAssignments = 0;
+        Integer nullAssignments = 0;
+
+        String CQL = "SELECT * FROM bucket_assignment_counts  " +
+                "WHERE experiment_id =?";
+        try {
+            Rows<Experiment.ID, String> rows = driver.getKeyspace()
+                    .prepareQuery(keyspace.bucketAssignmentCountsCF())
+                    .withCql(CQL)
+                    .asPreparedStatement()
+                    .withByteBufferValue(experiment.getID(), ExperimentIDSerializer.get())
+                    .execute()
+                    .getResult()
+                    .getRows();
+
+            if (!rows.isEmpty()) {
+                for (int i = 0; i < rows.size(); i++) {
+                    ColumnList<String> columns = rows.getRowByIndex(i).getColumns();
+                    if (columns.getStringValue("bucket_label", null) != null) {
+                        Bucket.Label bucketLabel = Bucket.Label.valueOf(columns.getStringValue("bucket_label", null));
+                        Long numberOfAssignments = columns.getColumnByName("bucket_assignment_count").getLongValue();
+                        totalAssignments = totalAssignments + numberOfAssignments.intValue();
+                        // Updates the BucketAssignmentCountList with # of assignments for that bucket
+                         
+                        // Is this check required ? 
+                        if (bucketAssignmentCountList != null) {
+                            if (!"NULL".equals(bucketLabel.toString())) {
+                                bucketAssignmentCountList.add(new BucketAssignmentCount.Builder()
+                                        .withBucket(bucketLabel)
+                                        .withCount(numberOfAssignments.intValue())
+                                        .build());
+                            } else {
+                                nullAssignments = numberOfAssignments.intValue();
+                                bucketAssignmentCountList.add(new BucketAssignmentCount.Builder()
+                                        .withBucket(null)
+                                        .withCount(nullAssignments)
+                                        .build());
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                bucketAssignmentCountList.add(new BucketAssignmentCount.Builder()
+                        .withBucket(null)
+                        .withCount(0)
+                        .build());
+            }
+
+        } catch (ConnectionException e) {
+            throw new RepositoryException("Could not fetch the bucket assignment counts for experiment " + experiment.getID(), e);
+        }
+
+        // Updates the assignmentCounts with bucketAssignmentCountList and
+        // the total # of bucket assignments for that experiment
+        assignmentCounts = new AssignmentCounts.Builder()
+                .withBucketAssignmentCount(bucketAssignmentCountList)
+                .withExperimentID(experiment.getID())
+                .withTotalUsers(new TotalUsers.Builder()
+                        .withBucketAssignments((long)totalAssignments - nullAssignments)
+                        .withNullAssignments(nullAssignments)
+                        .withTotal(totalAssignments)
+                        .build()).build();
+        return assignmentCounts;
+    }
+       */
 
 }

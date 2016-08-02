@@ -42,7 +42,18 @@ import com.intuit.wasabi.experimentobjects.Application;
 import com.intuit.wasabi.experimentobjects.Context;
 import com.intuit.wasabi.experimentobjects.Experiment;
 import com.intuit.wasabi.experimentobjects.Experiment.ID;
+import com.intuit.wasabi.repository.codec.ApplicationNameCodec;
+import com.intuit.wasabi.repository.codec.ContextCodec;
+import com.intuit.wasabi.repository.codec.ExperimentIDCodec;
+import com.intuit.wasabi.repository.codec.ExperimentIDToVarcharCodec;
+import com.intuit.wasabi.repository.codec.UserIDCodec;
+import com.intuit.wasabi.repository.model.ExperimentUser;
+import com.intuit.wasabi.repository.model.UserAssignmentLookup;
 
+/**
+ * Rough sketch of integration test for some of the assignment repo interface.
+ * This requires cassandra running locally with wasabi keyspace/tables with data
+ */
 public class AssignmentsRepositoryIntegrationTest {
 
 	private Session session;
@@ -72,31 +83,19 @@ public class AssignmentsRepositoryIntegrationTest {
 	public void testGetUserAssignment() {
 		MappingManager manager = new MappingManager(session);
 		AssignmentsRepository accessor = manager.createAccessor(AssignmentsRepository.class);
-//		Result<ExperimentUser> result = 
-//		accessor.getUserAssignments("SW50ZWdyVGVzdA_User_60", 
-//		"SW50ZWdyVGVzdA_1467633919665App_PRIMARY", "PROD");
-//		System.out.println("result is " + result.all());
-		/* Does not work ZZZ*/
 		ResultSet resultWithWrappedId = 
 		accessor.getUserAssignmentsByWrappedIds(User.ID.valueOf("SW50ZWdyVGVzdA_User_60"), 
 				Application.Name.valueOf("SW50ZWdyVGVzdA_1467633919665App_PRIMARY"), Context.valueOf("PROD"));
 		System.out.println("resultWithWrappedId is " + resultWithWrappedId.all());
-		/**/
 	}
 
 	@Test
-	public void testGetUserAssignmentFull() {
+	public void testGetUserAssignmentWithReturnObject() {
 		MappingManager manager = new MappingManager(session);
 		AssignmentsRepository accessor = manager.createAccessor(AssignmentsRepository.class);
-//		Result<ExperimentUser> result = 
-//		accessor.getUserAssignments("SW50ZWdyVGVzdA_User_60", 
-//		"SW50ZWdyVGVzdA_1467633919665App_PRIMARY", "PROD");
-//		System.out.println("result is " + result.all());
-		/* Does not work ZZZ*/
-		 ExperimentUser resultWithWrappedId = accessor.getUserAssignmentsFullByWrappedIds(User.ID.valueOf("SW50ZWdyVGVzdA_User_60"), 
+		ExperimentUser resultWithWrappedId = accessor.getUserAssignmentsFullByWrappedIds(User.ID.valueOf("SW50ZWdyVGVzdA_User_60"), 
 				Application.Name.valueOf("SW50ZWdyVGVzdA_1467633919665App_PRIMARY"), Context.valueOf("PROD"));
-		System.out.println("resultWithWrappedId is " + resultWithWrappedId);
-		/**/
+		System.out.println("resultWithWrappedId is " + resultWithWrappedId);		/**/
 	}
 
 	@Test
@@ -121,6 +120,7 @@ public class AssignmentsRepositoryIntegrationTest {
 
 	@Test
 	public void testDeleteUserAssignmentLookupWithoutLabel() {
+		// to be implemented
 	}
 
 	@Test

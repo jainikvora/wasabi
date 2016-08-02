@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.intuit.wasabi.repository;
+package com.intuit.wasabi.repository.codec;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -22,7 +22,6 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.utils.Bytes;
-import com.intuit.wasabi.assignmentobjects.User;
 import com.intuit.wasabi.experimentobjects.Context;
 
 public class ContextCodec extends TypeCodec<Context> {
