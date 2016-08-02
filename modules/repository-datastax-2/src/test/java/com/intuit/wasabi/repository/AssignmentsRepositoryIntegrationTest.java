@@ -43,7 +43,7 @@ import com.intuit.wasabi.experimentobjects.Context;
 import com.intuit.wasabi.experimentobjects.Experiment;
 import com.intuit.wasabi.experimentobjects.Experiment.ID;
 
-public class AssignmentsRepositoryTest {
+public class AssignmentsRepositoryIntegrationTest {
 
 	private Session session;
 	private ID id;
