@@ -82,7 +82,7 @@ public class EventSubmissionBeforeAssignmentTest  extends TestBase{
 
 
 	@Test()
-	public void t_replicateBug()
+	public void createImpression()
 	{
 		//create user
 		User user = UserFactory.createUser();
